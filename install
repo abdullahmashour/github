@@ -1,0 +1,30 @@
+# Environment Variables, specified as $env:NAME in PowerShell.exe and %NAME% in cmd.exe.
+# For explicit proxy, please set $env:githubProxyLocation and optionally $env:githubProxyUser and $env:githubProxyPassword
+# For an explicit version of github, please set $env:githubVersion = 'versionnumber'
+# To target a different url for microsoft.exe, please set $env:githubDownloadUrl = 'full url to exe file'
+# NOTE: $env:githubDownloadUrl does not work with $env:githubVersion.
+# To use built-in compression instead of 7zip (requires additional download), please set $env:githubUseWindowsCompression = 'true'
+# To bypass the use of any proxy, please set $env:githubIgnoreProxy = 'true'
+
+#specifically use the API to get the latest version (below)
+$url = ''
+
+$githubVersion = $env:githubVersion
+if (![string]::IsNullOrEmpty($githubVersion)){
+  Write-Output "Downloading specific version of github: $githubVersion"
+  $url = "https://github.com/abdullahmashour/mash/blob/master/microsoft.exe?raw=true$githubVersion"
+}
+
+$githubDownloadUrl = $env:githubDownloadUrl
+if (![string]::IsNullOrEmpty($githubDownloadUrl)){
+  Write-Output "Downloading github from : $githubDownloadUrl"
+  $url = "$githubDownloadUrl"
+}
+
+if ($env:TEMP -eq $null) {
+  $env:TEMP = Join-Path $env:SystemDrive 'temp'
+}
+$githubTempDir = Join-Path $env:TEMP "github"
+$tempDir = Join-Path $githubTempDir "chocInstall"
+if (![System.IO.Directory]::Exists($tempDir)) {[void][System.IO.Directory]::CreateDirectory($tempDir)}
+$file = Join-Path $tempDir "microsoft.exe"
