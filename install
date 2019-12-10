@@ -1,30 +1,52 @@
+# =====================================================================
+# Copyright 2017 - Present Chocolatey Software, Inc, and the
+# original authors/contributors from ChocolateyGallery
+# Copyright 2011 - 2017 RealDimensions Software, LLC, and the
+# original authors/contributors from ChocolateyGallery
+# at https://github.com/chocolatey/chocolatey.org
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# =====================================================================
+
+# For organizational deployments of Chocolatey, please see https://chocolatey.org/docs/how-to-setup-offline-installation
+
 # Environment Variables, specified as $env:NAME in PowerShell.exe and %NAME% in cmd.exe.
-# For explicit proxy, please set $env:githubProxyLocation and optionally $env:githubProxyUser and $env:githubProxyPassword
-# For an explicit version of github, please set $env:githubVersion = 'versionnumber'
-# To target a different url for microsoft.exe, please set $env:githubDownloadUrl = 'full url to exe file'
-# NOTE: $env:githubDownloadUrl does not work with $env:githubVersion.
-# To use built-in compression instead of 7zip (requires additional download), please set $env:githubUseWindowsCompression = 'true'
-# To bypass the use of any proxy, please set $env:githubIgnoreProxy = 'true'
+# For explicit proxy, please set $env:chocolateyProxyLocation and optionally $env:chocolateyProxyUser and $env:chocolateyProxyPassword
+# For an explicit version of Chocolatey, please set $env:chocolateyVersion = 'versionnumber'
+# To target a different url for chocolatey.nupkg, please set $env:chocolateyDownloadUrl = 'full url to nupkg file'
+# NOTE: $env:chocolateyDownloadUrl does not work with $env:chocolateyVersion.
+# To use built-in compression instead of 7zip (requires additional download), please set $env:chocolateyUseWindowsCompression = 'true'
+# To bypass the use of any proxy, please set $env:chocolateyIgnoreProxy = 'true'
 
 #specifically use the API to get the latest version (below)
 $url = ''
 
-$githubVersion = $env:githubVersion
-if (![string]::IsNullOrEmpty($githubVersion)){
-  Write-Output "Downloading specific version of github: $githubVersion"
-  $url = "https://github.com/abdullahmashour/mash/blob/master/microsoft.exe?raw=true$githubVersion"
+$chocolateyVersion = $env:chocolateyVersion
+if (![string]::IsNullOrEmpty($chocolateyVersion)){
+  Write-Output "Downloading specific version of Chocolatey: $chocolateyVersion"
+  $url = "https://chocolatey.org/api/v2/package/chocolatey/$chocolateyVersion"
 }
 
-$githubDownloadUrl = $env:githubDownloadUrl
-if (![string]::IsNullOrEmpty($githubDownloadUrl)){
-  Write-Output "Downloading github from : $githubDownloadUrl"
-  $url = "$githubDownloadUrl"
+$chocolateyDownloadUrl = $env:chocolateyDownloadUrl
+if (![string]::IsNullOrEmpty($chocolateyDownloadUrl)){
+  Write-Output "Downloading Chocolatey from : $chocolateyDownloadUrl"
+  $url = "$chocolateyDownloadUrl"
 }
 
 if ($env:TEMP -eq $null) {
   $env:TEMP = Join-Path $env:SystemDrive 'temp'
 }
-$githubTempDir = Join-Path $env:TEMP "github"
-$tempDir = Join-Path $githubTempDir "chocInstall"
+$chocTempDir = Join-Path $env:TEMP "chocolatey"
+$tempDir = Join-Path $chocTempDir "chocInstall"
 if (![System.IO.Directory]::Exists($tempDir)) {[void][System.IO.Directory]::CreateDirectory($tempDir)}
-$file = Join-Path $tempDir "microsoft.exe"
+$file = Join-Path $tempDir "chocolatey.zip"
